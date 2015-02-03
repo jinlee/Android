@@ -8,6 +8,9 @@ public class MyGlSurfaceView extends GLSurfaceView {
 
     private MyRenderer mRenderer = new MyRenderer();
 
+    private float previousX;
+    private boolean pointerMoved;
+
     public MyGlSurfaceView(Context context) {
         super(context);
         setEGLConfigChooser(8 , 8, 8, 8, 16, 0);
@@ -19,8 +22,21 @@ public class MyGlSurfaceView extends GLSurfaceView {
     public boolean onTouchEvent(MotionEvent e) {
 
         switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                pointerMoved = false;
+                previousX = e.getX();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                pointerMoved = true;
+                float x = e.getX();
+                float dx = x - previousX;
+                previousX = x;
+                mRenderer.toggleSwap(dx);
+                break;
             case MotionEvent.ACTION_UP:
-                mRenderer.toggleRotation();
+                if (!pointerMoved)
+                    mRenderer.toggleRotation();
+                break;
         }
 
         return true;
